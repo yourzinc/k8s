@@ -1,0 +1,16 @@
+# Manifesto script 는 k9s API 버전과 정의하려는 리소스의 유형을 밝히며 시작
+apiVersion: v1
+kind: Pod
+
+# 리소스의 metadata 에는 Name (required), label (optional)
+metadata:
+  name: hello-kiamol-3
+
+# Spec 은 리소스의 실제 정의 내용 
+# Pod 의 경우 실행할 컨테이너 정의
+# Container 는 이름과 이미지로 정의
+spec:
+  containers:
+    - name: web
+      image: kiamol/ch02-hello-kiamol
+

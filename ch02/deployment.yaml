@@ -1,0 +1,30 @@
+# Deployment 는 API 버전 1 에 속한다
+apiVersion: apps/v1
+kind: Deployment
+
+# Deployment 의 이름을 정해야 한다
+metadata:
+  name: hello-kiamol-4
+
+# Deployment 가 자신의 관리 대상을 결정하는 label selector 가 정의된다
+# 여기에는 app 레이블을 사용하는데, label 은 임의의 key-value pair 
+spec:
+  selector:
+    matchLabels:
+      app: hello-kiamol-4
+
+  # 이 템플릿은 deployment 가 pod 를 만들 때 쓰인다
+  template:
+    # deployment 속 pod 의 정의에는 이름이 없다
+    # 대신 label selector 와 일치하는 label 을 지정해야 한다
+    metadata:
+      labels:
+        app: hello-kiamol-4
+
+    # pod 의 정의에는 컨테이너 이름과 이미지 이름을 지정한다
+    spec:
+      containers:
+        - name: web
+          image: kiamol/ch02-hello-kiamol
+
+

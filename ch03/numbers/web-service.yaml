@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: numbers-web
+
+spec:
+  ports:
+    - port: 8080      # Service 가 주시하는 port (listen)
+      targetPort: 80  # 트래픽이 전달될 pod 의 port 
+  selector:
+    app: numbers-web
+  type: LoadBalancer # 외부 트래픽도 전달할 수 있는 service 

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: numbers-api                         # 클러스터 내부에서 사용되는 로컬 도메인 네임 
+spec:
+  type: ExternalName
+  externalName: raw.githubusercontent.com   # 로컬 도메인 네임을 해소할 외부 도메인

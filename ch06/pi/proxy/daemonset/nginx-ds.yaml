@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: pi-proxy
+  labels:
+    kiamol: ch06
+spec:
+  selector:
+    matchLabels:
+      app: pi-proxy       # 데몬셋의 관리 대상인 파드를 결정하는 기준
+  template: 
+    metadata:
+      labels:
+        app: pi-proxy     # 레이블 셀렉터와 레이블이 일치해야 함
+    spec:
+      # 파드의 정의
+      containers:
+        - image: nginx:1.17-alpine
+          name: nginx
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/nginx/"
+              readOnly: true
+            - name: cache-volume
+              mountPath: /data/nginx/cache
+      volumes:
+        - name: config
+          configMap:
+            name: pi-proxy-configmap
+        - name: cache-volume
+          hostPath:
+            path: /volumes/nginx-cache
+            type: DirectoryOrCreate

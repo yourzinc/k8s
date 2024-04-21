@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pi-web
+spec:
+  replicas: 2 # 이 필드는 필수가 아니고 생략할 경우 1이 적용된다
+  selector:
+    matchLabels:
+      app: pi-web
+  template: # 이 뒤로 일반적인 파드의 정의가 이어진다
+    metadata:
+      labels:
+        app: pi-web
+    spec:
+      containers:
+        - image: kiamol/ch05-pi
+          command: ["dotnet", "Pi.Web.dll","-m","web"]
+          name: web
+          ports:
+            - containerPort: 80
+              name: http
+
+  

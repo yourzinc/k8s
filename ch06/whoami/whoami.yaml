@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet # Deployment 와 정의 내용이 거의 같다
+metadata:
+  name: whoami-web
+spec:
+  replicas: 1
+  selector: # 관리 대상 pod 를 찾기 위한 selector
+    matchLabels:
+      app: whoami-web
+  template: # 일반적인 pod 의 정의가 이 뒤로 이어진다
+    metadata:
+      labels:
+        app: whoami-web
+    spec:
+      containers:
+        - image: kiamol/ch02-whoami
+          name: web
+          ports:
+            - containerPort: 80
+              name: http

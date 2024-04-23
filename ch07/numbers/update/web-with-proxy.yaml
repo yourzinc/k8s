@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: numbers-web
+  labels:
+    kiamol: ch07
+spec:
+  selector:
+    matchLabels:
+      app: numbers-web
+  template:
+    metadata:
+      labels:
+        app: numbers-web
+    spec:
+      containers:        
+        - name: web
+          image: kiamol/ch03-numbers-web
+          env:
+          - name: http_proxy              # proxy 사용 설정
+            value: http://localhost:1080  # 모든 traffic 이 Ambassador container 를 거친다
+          - name: RngApi__Url
+            value: http://localhost/api   # API 에 접근하기 위한 localhost 주소 
+        - name: proxy
+          image: kiamol/ch07-simple-proxy   # 간단한 HTTP proxy 
+          env:
+          - name: Proxy__Port              # Application 의 네트워크 요청을 라우팅
+            value: "1080"                 # 설정된 URL mapping 에 따라 라우팅 
+          - name: Proxy__Request__UriMap__Source
+            value: http://localhost/api
+          - name: Proxy__Request__UriMap__Target
+            value: http://numbers-api/sixeyed/kiamol/master/ch03/numbers/rng
+

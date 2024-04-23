@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timecheck
+  labels:
+    kiamol: ch07
+spec:
+  selector:
+    matchLabels:
+      app: timecheck
+  template:
+    metadata:
+      labels:
+        app: timecheck
+        version: v2
+    spec:
+      initContainers:
+        - name: init-config
+          image: kiamol/ch03-sleep  # 이 이미지에는 jq 명령이 들어 있다
+          command: ['sh', '-c', "cat /config-in/appsettings.json | jq --arg APP_ENV \"$APP_ENVIRONMENT\" '.Application.Environment=$APP_ENV' > /config-out/appsettings.json"]
+          env:
+            - name: APP_ENVIRONMENT # 모든 컨테이너는 각자의 환경 변수를 갖는다
+              value: TEST # 이 환경 변수는 파드 안에서 공유되지 않는다 
+          volumeMounts:
+            - name: config-map      # configMap 을 읽어 들이는 볼륨
+              mountPath: /config-in
+            - name: config-dir
+              mountPath: /config-out  # 구성된 설정 파일을 기록할 공디렉터리 볼륨
+      containers:
+        - name: timecheck
+          image: kiamol/ch07-timecheck
+          volumeMounts:
+            - name: config-dir
+              mountPath: /config
+              readOnly: true
+      volumes:
+        - name: config-map
+          configMap:
+            name: timecheck-config
+        - name: config-dir
+          emptyDir: {}

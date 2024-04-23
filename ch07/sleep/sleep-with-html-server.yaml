@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sleep
+  labels:
+    kiamol: ch07
+spec:
+  selector:
+    matchLabels:
+      app: sleep
+  template:
+    metadata:
+      labels:
+        app: sleep
+    spec:                   # deployment 의 template 필드에 정의된 파드
+      initContainers:       # init container 는 배열 형태
+        - name: init-html   # 나열된 순서로 실행
+          image: kiamol/ch03-sleep
+          command: ['sh', '-c', "echo '<!DOCTYPE html><html><body><h1>KIAMOL Ch07</h1></body></html>' > /data/index.html"]
+          volumeMounts:
+            - name: data
+              mountPath : /data # init container 는 pod 의 volume 을 마운트 할 수 있다 
+      containers:
+        - name: sleep
+          image: kiamol/ch03-sleep        
+        - name: server
+          image: kiamol/ch03-sleep  
+          command: ['sh', '-c', 'while true; do echo -e "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 62\n\n$(cat /data-ro/index.html)" | nc -l -p 8080; done']
+          ports:
+            - containerPort: 8080
+              name: http
+          volumeMounts:
+            - name: data
+              mountPath: /data-ro
+              readOnly: true
+      volumes:
+        - name: data
+          emptyDir: {}

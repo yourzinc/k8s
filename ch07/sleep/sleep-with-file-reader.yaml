@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sleep
+  labels:
+    kiamol: ch07
+spec:
+  selector:
+    matchLabels:
+      app: sleep
+  template:
+    metadata:
+      labels:
+        app: sleep
+    spec:
+      containers:     # 컨테이너 필드의 형태는 배열
+        - name: sleep
+          image: kiamol/ch03-sleep
+          volumeMounts:
+            - name: data
+              mountPath: /data-rw # 볼륨을 쓰기 가능으로 마운트
+        - name: file-reader
+          image: kiamol/ch03-sleep
+          volumeMounts:
+            - name: data
+              mountPath: /data-ro 
+              readOnly: true      # 위와 같은 볼륨을 읽기 전용으로 마운트
+      volumes:
+        - name: data   # 같은 볼륨을 여러 컨테이너에 마운트할 수 있다
+          emptyDir: {}
